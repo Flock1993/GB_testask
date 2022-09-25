@@ -1,0 +1,31 @@
+import json
+import os
+
+from django.core.management.base import BaseCommand
+
+from json_import.models import Sensors
+
+
+class Command(BaseCommand):
+    help = 'Команда для импорта данных из .json файлов в БД'
+
+    def handle(self, *args, **options):
+        """
+        Запуск произвести командой python manage.py json_import
+        Сейчас команда только перечисляет названия файлов из папки telemetry
+        """
+        with open('config.json', newline='', encoding='utf-8') as file:
+            lst_sensors = json.load(file)['loading_sensors']
+            print(lst_sensors)
+        dir_name = "telemetry"
+        for json_file in os.listdir(dir_name):
+            if json_file.endswith('.json'):
+                print(json_file)
+        print('Импорт показаний датчиков в БД произведен успешно')
+
+    def smoke_test_handle(self):
+        """
+        Здесь должен быть код который автоматически запускает команду выше
+        assert ...
+        """
+        pass
