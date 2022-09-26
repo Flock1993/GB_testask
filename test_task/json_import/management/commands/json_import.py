@@ -2,27 +2,33 @@ import json
 import os
 import sqlite3
 from datetime import timedelta, datetime
+from json_import.models import Sensor, Sensors, SensorValue
 
 
-DIR_NAME = 'telemetry'
+DIR_NAME = '../../../../telemetry'
 DB_file = '/c/Dev/GB_testask/test_task/db.sqlite'
 
-
+"""
 def sql_write(dict_data):
-    """Заполнение локальной БД"""
+    """'''Заполнение локальной БД'''"""
     con = sqlite3.connect('DB_file')
     cur = con.cursor()
     cur.execute('''
     CREATE TABLE IF NOT EXISTS sensors_data(
         id INTEGER PRIMARY KEY,
         sensor_id TEXT,
-        avg_value FLOAT,
+        avg_value FLOAT
     );
     ''')
-    for sensor, value in dict_data.items():
-        cur.executemany('INSERT INTO sensors_data VALUES(sensor, value);', dict_data)
+    for sensor_, value_ in dict_data.items():
+        cur.execute(
+            'INSERT INTO sensors_data VALUES(?, ?, ?);',
+            (int(sensor_[6:]), sensor_, value_)
+        )
     con.commit()
     con.close()
+"""
+
 
 def time_parsing(file_name):
     """Парсинг даты и времени в названии файла"""
@@ -40,12 +46,14 @@ def time_parsing(file_name):
 
 def process_telemetry(conf_datetime):
     """Главная функция импорта показаний датчиков json в БД"""
+
     with open('config.json', newline='', encoding='utf-8') as target_sensors:
         lst_sensors = json.load(target_sensors)['loading_sensors']
         # print(lst_sensors)
-        dict_sensors = {x: x for x in lst_sensors}
-        mid_result = {x: {'count': 0, 'summ': 0} for x in lst_sensors}
+        dict_sensors = {x: x for x in lst_sensors} # "sensor1": "sensor1"
+        mid_result = {x: {'count': 0, 'summ': 0} for x in lst_sensors} # "sensor1": [0, 0]
         # print(dict_sensors)
+
     for json_file in os.listdir(DIR_NAME):
         if json_file.startswith('sensors_') and (json_file.endswith('.json')):
             pars_datetime = time_parsing(json_file)
@@ -70,4 +78,3 @@ if __name__ == '__main__':
     dict_data = {'sensor5': -54.7385591845027, 'sensor6': 1.388232273076926,
                  'sensor8': -4.801022327120117, 'sensor10': -3.2863522249312043,
                  'sensor24': 0.40464928360372165}
-    sql_write(dict_data)

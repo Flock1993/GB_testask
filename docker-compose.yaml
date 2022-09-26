@@ -1,0 +1,51 @@
+# версия docker-compose
+version: '3.8'
+
+# имена и описания контейнеров, которые должны быть развёрнуты
+services:
+  # описание контейнера db
+  db:
+    # образ, из которого должен быть запущен контейнер
+    image: postgres:13.0-alpine
+    # volume и связанная с ним директория в контейнере
+    volumes:
+      - data_value:/var/lib/postgresql/data/
+    # адрес файла, где хранятся переменные окружения test_task
+    env_file:
+      - ./.env
+  web:
+    build: .
+    restart: always
+    ports:
+     - "8000:8000"
+    # "зависит от",
+    depends_on:
+      - db
+    env_file:
+      - ./.env
+    volumes:
+      - ./test_task:/app
+  redis:
+    image: redis:6.0.6-alpine
+    restart: unless-stopped
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: [ "CMD", "redis-cli","ping" ]
+      interval: 1m20s
+      timeout: 5s
+      retries: 3
+  celery:
+    build: .
+    restart: always
+    command: celery -A test_task worker --beat -l info
+    depends_on:
+      - db
+      - redis
+    env_file:
+      - ./.env
+    volumes:
+      - ./test_task:/app
+volumes:
+  data_value:
+  redis_data:

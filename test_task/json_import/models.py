@@ -1,9 +1,8 @@
 from django.db import models
 
 
-class Sensors(models.Model):
+class Sensor(models.Model):
     sensor_id = models.CharField("ID датчика", max_length=15, unique=True)
-    sensor_value = models.FloatField("Показания датчика", max_length=50)
 
     class Meta:
         verbose_name = "Датчик"
@@ -11,3 +10,18 @@ class Sensors(models.Model):
 
     def __str__(self):
         return self.sensor_id
+
+
+class SensorValue(models.Model):
+    sensor = models.ForeignKey(Sensor, on_delete=models.CASCADE, related_name='sensor_values')
+    sensor_value = models.FloatField("Показания датчика", max_length=50)
+    timestamp = models.DateTimeField("Измеряемый промежуток")
+
+    class Meta:
+        verbose_name = "Значения датчика"
+        verbose_name_plural = "Значения датчиков"
+
+
+class Sensors(models.Model):
+    timestamp = models.DateTimeField("Измеряемый промежуток", primary_key=True, editable=False)
+    values = models.JSONField("Значения датчиков", default=dict)
