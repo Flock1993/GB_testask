@@ -29,6 +29,6 @@ docker-compose exec web python manage.py migrate
 docker-compose exec web python manage.py createsuperuser
 ```
 ## Использованные технологии
-Python 3.7, Django 2.2.16, Docker
+Python 3.9, Django 3.2.15, Docker
 ### Автор
 Строков Матвей
