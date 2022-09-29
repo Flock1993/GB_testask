@@ -121,6 +121,7 @@ USE_TZ = False
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
 
 STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
 
 CELERY_BROKER_URL = os.environ.get('CELERY_BROKER_URL', "redis://redis:6379")
 CELERY_RESULT_BACKEND = os.environ.get('CELERY_RESULT_BACKEND',
@@ -134,8 +135,12 @@ CELERY_TASK_SERIALIZER = 'json'
 
 CELERY_BEAT_SCHEDULE = {
     'import_sensor_reading': {
-        'task': 'test_task.tasks.import_sensor_reading',
-        'schedule': crontab(minute="*/1"),
+        'task': 'json_import.tasks.import_sensor_reading',
+        'schedule': crontab(minute="*/60"),
     }
 }
+
+# Для боевого применения заменить строку выше на
+#         'schedule': crontab(minute=0, hour='*/1'),
+
 

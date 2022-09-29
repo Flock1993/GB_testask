@@ -4,6 +4,8 @@ services:
   db:
     image: postgres:13.0-alpine
     # volume и связанная с ним директория в контейнере
+    ports:
+      - "5432:5432"
     volumes:
       - data_value:/var/lib/postgresql/data/
     # адрес файла, где хранятся переменные окружения test_task

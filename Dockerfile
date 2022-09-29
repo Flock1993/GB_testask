@@ -17,4 +17,6 @@ COPY test_task/ /app
 
 
 # Выполнить запуск сервера разработки при старте контейнера.
-CMD ["gunicorn", "test_task.wsgi:application", "--bind", "0:8000" ]
+# CMD ["gunicorn", "test_task.wsgi:application", "--bind", "0.0.0.0:8000", "--reload"]
+# перезагрузка при изменении кода
+CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
