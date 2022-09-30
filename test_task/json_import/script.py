@@ -30,7 +30,10 @@ def delta_datetime(str_data: str, pars_datetime: datetime
     Отладочная функция расчета разницы datatime имени файла и содержимого
     Дата в названии файла и его содержимом отличается
     """
-    content_data = datetime.strptime(str_data, '%Y-%m-%d %H:%M:%S')
+    try:
+        content_data = datetime.strptime(str_data, '%Y-%m-%d %H:%M:%S')
+    except ValueError:
+        print('Некорректная строка даты')
     if pars_datetime != content_data:
         return pars_datetime - content_data
     return None
