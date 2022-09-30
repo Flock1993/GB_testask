@@ -45,6 +45,7 @@ class JsonPars:
     DIR_TELEM = 'data/telemetry'
     DIR_CONFIG = 'data'
     REF_POINT = datetime(2021, 7, 15, 10, 0, 0)
+
     # для "боевого" применения класса использовать datetime.now()
 
     def __init__(self,
@@ -62,7 +63,8 @@ class JsonPars:
         Создание объектов и вспомогательных коллекций
         из названий целевых датчиков
         """
-        with open(f'{self.dir_config}/config.json', encoding='utf-8') as target_sensors:
+        with open(f'{self.dir_config}/config.json',
+                  encoding='utf-8') as target_sensors:
             lst_sensors = json.load(target_sensors)['loading_sensors']
             for elem in lst_sensors:
                 Sensor.objects.get_or_create(sensor_id=elem)
@@ -75,10 +77,8 @@ class JsonPars:
         """Передача показаний датчиков в БД"""
         lst_sensors, dict_sensors, mid_result = self.create_collections()
         for json_file in os.listdir(self.dir_telemetry):
-            if not ((json_file.startswith('sensors_') or (
-                    json_file.endswith('.json')) or len(json_file) == 32)):
-                print(f'Название или формат файла {json_file} некорректны')
-            else:
+            if json_file.startswith('sensors_') and (
+                    json_file.endswith('.json')) and len(json_file) == 32:
                 proces_datetime = parsing_datetime(json_file)
                 if proces_datetime is not None:
                     if self.conf_datetime <= proces_datetime < (
@@ -95,6 +95,8 @@ class JsonPars:
                                         += sensor['value']
                 else:
                     return False
+            else:
+                print(f'Название или формат файла {json_file} некорректны')
         result = {}
         for sensor, sensor_values in mid_result.items():
             if sensor_values['count'] == 0:

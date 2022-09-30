@@ -16,9 +16,11 @@ class JsonImportTest(TestCase):
         for elem in lst:
             if not os.path.isdir(elem):
                 os.makedirs(elem)
+        with open(f'{self.DIR_CONF}/config.json', 'w') as file:
+            file.write('{"loading_sensors": ["sensor50", "sensor51"]}')
 
     def tearDown(self) -> None:
-        flag = False
+        flag = True
         if flag:
             for file in os.listdir(self.DIR_DATA):
                 os.remove(os.path.join(self.DIR_DATA, file))
@@ -63,9 +65,54 @@ class JsonImportTest(TestCase):
         self.assertEqual(len(mid_result), length)
 
     def test_bad_filename(self) -> None:
-        """Файлы с некорректным названием и форматом не обрабатываются"""
-        pass
+        """Файлы с некорректным форматом не обрабатываются"""
+        with open(f'{self.DIR_DATA}/sensors_2021-07-15_10_55_44.txt', 'w') as file:
+            file.write('{"timestamp": "2021-07-15 10:55:43", "sensors": '
+                       '[{"sensor_id": "sensor50", "value": 2}, '
+                       '{"sensor_id": "sensor51", "value": 2}]}')
+        with open(f'{self.DIR_DATA}/sensors_2021-07-15_10_56_18.csv',
+                  'w') as file:
+            file.write('"2021-07-15 10:56:17","sensor50",3,"sensor51",3')
+        instanse = JsonPars(
+            dir_config=self.DIR_CONF,
+            dir_telemetry=self.DIR_DATA
+        )
+        instanse.process_telemetry()
+        incorrect = [2, 3, 2.5]
+        sensor51 = Sensor.objects.get(sensor_id='sensor51')
+        sensor_value51 = sensor51.sensor_values.last()
+        self.assertNotIn(sensor_value51.sensor_value, incorrect)
 
     def test_bad_datetime(self) -> None:
-        """Файлы с некорректной датой не обрабатываются"""
-        pass
+        """Файлы с некорректным форматом даты в названнии не обрабатываются"""
+        with open(f'{self.DIR_DATA}/sensors_2021-99-15_10_55_44.json', 'w') as file:
+            file.write('{"timestamp": "2021-07-15 17:55:43", "sensors": '
+                       '[{"sensor_id": "sensor50", "value": 1}, '
+                       '{"sensor_id": "sensor51", "value": 2}]}')
+        instanse = JsonPars(
+            dir_config=self.DIR_CONF,
+            dir_telemetry=self.DIR_DATA,
+        )
+        instanse.process_telemetry()
+        sensor51 = Sensor.objects.get(sensor_id='sensor51')
+        sensor_value51 = sensor51.sensor_values.last()
+        self.assertEqual(sensor_value51, None)
+
+    def test_datetime_outofrange(self) -> None:
+        """
+        Данные из файлов с датой вне диапазона считывания не попадают в БД
+        """
+        with open(f'{self.DIR_DATA}/sensors_2021-07-15_17_55_44.json', 'w') as file:
+            file.write('{"timestamp": "2021-07-15 17:55:43", "sensors": '
+                       '[{"sensor_id": "sensor50", "value": 1}, '
+                       '{"sensor_id": "sensor51", "value": 2}]}')
+        native_datatime = datetime(2021, 7, 15, 13, 0, 0)
+        instanse = JsonPars(
+            dir_config=self.DIR_CONF,
+            dir_telemetry=self.DIR_DATA,
+            conf_datetime=native_datatime
+        )
+        instanse.process_telemetry()
+        sensor51 = Sensor.objects.get(sensor_id='sensor51')
+        sensor_value51 = sensor51.sensor_values.last()
+        self.assertNotEqual(sensor_value51.sensor_value, 2)
