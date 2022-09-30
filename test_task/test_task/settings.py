@@ -40,6 +40,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'json_import.apps.JsonImportConfig',
+    'api.apps.ApiConfig',
+    'rest_framework',
+    'drf_yasg',
 ]
 
 MIDDLEWARE = [
@@ -115,7 +118,7 @@ USE_I18N = True
 
 USE_L10N = True
 
-USE_TZ = False
+USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
@@ -142,5 +145,19 @@ CELERY_BEAT_SCHEDULE = {
 
 # Для боевого применения заменить строку выше на
 #         'schedule': crontab(minute=0, hour='*/1'),
+
+SWAGGER_SETTINGS = {
+    'SECURITY_DEFINITIONS': {
+        'basic': {'type': 'basic'},
+        'Bearer': {
+            'type': 'apiKey',
+            'name': 'Authorization',
+            'description': 'Value example: Bearer ******************',
+            'in': 'header',
+        },
+
+    },
+    'DEFAULT_MODEL_RENDERING': 'example',
+}
 
 

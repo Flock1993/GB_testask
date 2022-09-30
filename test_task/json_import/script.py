@@ -61,13 +61,11 @@ class JsonPars:
         """
         with open(f'{self.dir_config}/config.json', encoding='utf-8') as target_sensors:
             lst_sensors = json.load(target_sensors)['loading_sensors']
-            # ['sensor1', 'sensor5', 'sensor6', ...] # print(lst_sensors)
             for elem in lst_sensors:
                 Sensor.objects.get_or_create(sensor_id=elem)
             dict_sensors = {x: x for x in lst_sensors}
             mid_result = {x: {'count': 0, 'summ': 0} for x in
-                          lst_sensors}  # "sensor1": [0, 0]
-            # {'sensor1': 'sensor1', ...} print(dict_sensors)
+                          lst_sensors}
         return lst_sensors, dict_sensors, mid_result
 
     def process_telemetry(self) -> None:

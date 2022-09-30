@@ -36,7 +36,7 @@ class JsonImportTest(TestCase):
                        '"sensor50",4,"sensor51",4')
 
     def tearDown(self) -> None:
-        flag = True
+        flag = False
         if flag:
             for file in os.listdir(self.DIR_DATA):
                 os.remove(os.path.join(self.DIR_DATA, file))

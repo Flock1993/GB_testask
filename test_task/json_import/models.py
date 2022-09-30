@@ -20,8 +20,3 @@ class SensorValue(models.Model):
     class Meta:
         verbose_name = "Значения датчика"
         verbose_name_plural = "Значения датчиков"
-
-
-class Sensors(models.Model):
-    timestamp = models.DateTimeField("Измеряемый промежуток", primary_key=True, editable=False)
-    values = models.JSONField("Значения датчиков", default=dict)

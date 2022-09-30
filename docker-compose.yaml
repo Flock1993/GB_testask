@@ -3,12 +3,10 @@ version: '3.8'
 services:
   db:
     image: postgres:13.0-alpine
-    # volume и связанная с ним директория в контейнере
     ports:
       - "5432:5432"
     volumes:
       - data_value:/var/lib/postgresql/data/
-    # адрес файла, где хранятся переменные окружения test_task
     env_file:
       - ./.env
   web:
@@ -23,6 +21,7 @@ services:
       - ./.env
     volumes:
       - ./test_task:/app
+      - ./test_task/data:/app/data:ro
   redis:
     image: redis:6.0.6-alpine
     restart: unless-stopped
