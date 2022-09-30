@@ -1,1 +1,0 @@
-{"timestamp": "2021-07-15 10:53:05","sensors": [{"sensor_id": "sensor50", "value": 3}, {"sensor_id": "sensor51", "value": 3}]}

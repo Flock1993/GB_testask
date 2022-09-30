@@ -1,8 +1,7 @@
 from django.contrib import admin
 
-from .models import Sensors, Sensor, SensorValue
+from .models import Sensor, SensorValue
 
-admin.site.register(Sensors)
 admin.site.register(Sensor)
 admin.site.register(SensorValue)
 
