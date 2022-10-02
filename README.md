@@ -48,7 +48,7 @@ sensors_2021-07-14_09_36_54.json
 ```
 POST: /api/write_values
 ```
-## Шаблон наполнения env-файла
+## Шаблон наполнения env-файла, дополнительно указан в .env_example
 ```
 DB_ENGINE=django.db.backends.postgresql
 DB_NAME=postgres
@@ -70,15 +70,12 @@ cd /GB_testtask/
 ```
 docker-compose up
 ```
-Подготовить проект для миграций:
-```
-docker-compose exec web python manage.py makemigrations
-```
-Произвести миграции:
-```
-docker-compose exec web python manage.py migrate
 ```
 Создать суперюзера (ввести эмейл, пароль):
+```
+- Развернуть БД Postgres: при работающем приложении Docker выполнить команду:
+```
+docker-compose up
 ```
 docker-compose exec web python manage.py createsuperuser
 ```
