@@ -70,16 +70,50 @@ cd /GB_testtask/
 ```
 docker-compose up
 ```
-```
 Создать суперюзера (ввести эмейл, пароль):
-```
-- Развернуть БД Postgres: при работающем приложении Docker выполнить команду:
-```
-docker-compose up
 ```
 docker-compose exec web python manage.py createsuperuser
 ```
+## Доступные возможности
+Административный интерфейс
+```
+http://localhost:8000/admin/
+```
+Документация API, доступна только после входа в "админку"
+```
+http://localhost:8000/redoc/
+```
+Запуск тестов (пока написаны только для приложения json_import)
+```
+docker-compose exec web python manage.py test
+```
+Запуск management command для импорта показаний датчиков в базу данных
+```
+docker-compose exec web python manage.py jsonimport
+```
+## Доступные эндпоинты
+Запись показаний датчика в базу данных 
+POST http://localhost:8000/api/write_values
+```
+{
+  "timestamp": "2021-06-01T19:41:59.244Z",
+  "sensor_values": [
+    {
+      "sensor_id": "string",
+      "value": "Decimal(10, 3)"
+    }
+  ]
+}
+```
+Ответы
+```
+Status code: 200 
+Body: { “status”: “Success”, desc: “Дополнительная информация”}
+
+Status code: 400
+Body: {“status”: ”Error”, “desc”: “timestamp меньше чем максимальный timestamp в БД”}
+```
 ## Использованные технологии
-Python 3.9, Django 3.2.15, Docker, Celery 5.2, Redis 4.3, Djangorestframework 3.12.4
+Python 3.9, Django 3.2.15, Docker, Celery 5.2, Redis 4.3, Djangorestframework 3.12.4, Swagger
 ### Автор
 Строков Матвей
