@@ -81,7 +81,7 @@ http://localhost:8000/admin/
 ```
 Документация API, доступна только после входа в "админку"
 ```
-http://localhost:8000/redoc/
+http://localhost:8000/swagger/
 ```
 Запуск тестов (пока написаны только для приложения json_import)
 ```
